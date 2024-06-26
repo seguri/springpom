@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.basepom</groupId>
+    <artifactId>basepom-minimal</artifactId>
+    <version>59</version>
+  </parent>
+
+  <groupId>name.seguri.java</groupId>
+  <artifactId>springpom</artifactId>
+  <version>3.3.1-1</version>
+  <packaging>pom</packaging>
+
+  <scm>
+    <connection>scm:git:https://github.com/seguri/springpom</connection>
+    <developerConnection>scm:git:git@github.com:seguri/springpom.git</developerConnection>
+    <url>https://github.com/seguri/springpom</url>
+  </scm>
+
+  <issueManagement>
+    <system>GitHub</system>
+    <url>https://github.com/seguri/springpom/issues</url>
+  </issueManagement>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <properties>
+    <java.version>21</java.version>
+    <kotlin.version>1.9.24</kotlin.version>
+    <project.build.systemJdk>${java.version}</project.build.systemJdk>
+    <project.build.targetJdk>${java.version}</project.build.targetJdk>
+
+    <dep.spring-boot.version>3.3.1</dep.spring-boot.version>
+    <dep.pmd.version>7.2.0</dep.pmd.version>
+
+    <dep.plugin.error-prone.version>2.26.1</dep.plugin.error-prone.version>
+    <dep.plugin.googleJavaFormat.version>1.22.0</dep.plugin.googleJavaFormat.version>
+    <dep.plugin.gpg.version>3.2.1</dep.plugin.gpg.version>
+    <dep.plugin.ktfmt.version>0.50</dep.plugin.ktfmt.version>
+    <dep.plugin.nexus.version>1.6.13</dep.plugin.nexus.version>
+    <dep.plugin.pmd.version>3.23.0</dep.plugin.pmd.version>
+    <dep.plugin.spotless.version>2.44.0.BETA1</dep.plugin.spotless.version>
+
+    <basepom.compiler.fail-warnings>true</basepom.compiler.fail-warnings>
+    <basepom.javadoc.skip>false</basepom.javadoc.skip>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${dep.spring-boot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <version>${dep.plugin.spotless.version}</version>
+        <configuration>
+          <java>
+            <googleJavaFormat>
+              <version>${dep.plugin.googleJavaFormat.version}</version>
+              <style>GOOGLE</style>
+            </googleJavaFormat>
+            <removeUnusedImports/>
+          </java>
+          <kotlin>
+            <ktfmt>
+              <version>${dep.plugin.ktfmt.version}</version>
+              <style>GOOGLE</style>
+            </ktfmt>
+          </kotlin>
+          <pom>
+            <sortPom>
+              <indentAttribute>schemaLocation</indentAttribute>
+              <expandEmptyElements>false</expandEmptyElements>
+            </sortPom>
+          </pom>
+        </configuration>
+        <executions>
+          <execution>
+            <id>spotless</id>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <phase>validate</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <configuration>
+          <ignoredDependencies>org.springframework*:*</ignoredDependencies>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <compilerArgs>
+            <arg>-XDcompilePolicy=simple</arg>
+            <arg>-Xplugin:ErrorProne</arg>
+          </compilerArgs>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>com.google.errorprone</groupId>
+              <artifactId>error_prone_core</artifactId>
+              <version>${dep.plugin.error-prone.version}</version>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>${dep.plugin.nexus.version}</version>
+        <extensions>true</extensions>
+        <configuration>
+          <serverId>ossrh</serverId>
+          <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+          <autoReleaseAfterClose>true</autoReleaseAfterClose>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>springpom.sign</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>${dep.plugin.gpg.version}</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+                <phase>verify</phase>
+                <configuration>
+                  <keyname>0xA0A378A5</keyname>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>
