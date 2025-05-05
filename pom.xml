@@ -11,7 +11,7 @@
 
   <groupId>name.seguri.java</groupId>
   <artifactId>springpom</artifactId>
-  <version>3.4.5-1</version>
+  <version>3.4.5-2</version>
   <packaging>pom</packaging>
   <description>A BasePom, with Spring Boot and enhanced static analysis</description>
 
@@ -129,6 +129,7 @@
         <configuration>
           <compilerArgs>
             <arg>-XDcompilePolicy=simple</arg>
+            <arg>--should-stop=ifError=FLOW</arg>
             <arg>-Xplugin:ErrorProne</arg>
           </compilerArgs>
           <annotationProcessorPaths>
