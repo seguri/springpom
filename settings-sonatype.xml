@@ -1,9 +1,9 @@
 <settings>
   <servers>
     <server>
-      <id>ossrh</id>
-      <username>your-jira-id</username>
-      <password>your-jira-pwd</password>
+      <id>central</id>
+      <username>your-central-id</username>
+      <password>your-central-pwd</password>
     </server>
   </servers>
 </settings>
