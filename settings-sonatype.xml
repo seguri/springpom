@@ -1,7 +1,7 @@
 <settings>
   <servers>
     <server>
-      <id>ossrh</id>
+      <id>central</id>
       <username>your-jira-id</username>
       <password>your-jira-pwd</password>
     </server>
